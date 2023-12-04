@@ -1,0 +1,78 @@
+import random
+
+# Defina as posições x e y dos clientes
+posicoes = [[10, 0], [1, 13], [30, 4]]
+
+# Crie um array de objetos com índice do cliente e quantidade de água desejada
+cliente_solicita = [[1, 4], [3, 3], [2, 1]]
+
+# Defina o número máximo de galões que o entregador pode levar
+capacidade = 4
+
+# Defina o número máximo tolerável de minutos para a satisfação do cliente
+max_minutos = 30
+
+# Função para calcular o tempo de tolerância do cliente com base na distância
+def calcular_tolerancia(distancia):
+return distancia * 1.5
+
+# Função para calcular o fitness de um cromossomo (rota)
+def calcular_fitness(route):
+total_distancia = 0
+total_galoes = 0
+localização_atual = 0 # A sede é o ponto de partida
+total_satisfacao = 0
+
+for i in range(len(route)):
+cliente_index = route[i]
+
+cliente_posicao = posicao[cliente_index]
+distancia_do_cliente = ((cliente_posicao[0] - posicao[localização_atual][0])**2 +
+(cliente_posicao [1] - posicao[posicao[localização_atual][1])**2)**0.5
+
+total_distancia += distancia_do_ cliente
+
+# Quantidade de água desejada pelo cliente
+
+total_galoes += cliente _solicitacao [cliente _index][1]
+
+# Calcula o tempo de tolerância do cliente com base na distância
+cliente _tolerancia = calcular_tolerancia(distancia_do_ cliente)
+
+# Penaliza rotas que excedem a capacidade ou tempo máximo
+if total_galoes &gt; capacidade ou total_distancia &gt; max_minutos ou total_distancia &gt; cliente
+_tolerancia:
+return 0
+else:
+# Adiciona satisfação do cliente com base no tempo de tolerância restante
+satisfacao = max(0, 1 - (total_distancia / cliente _tolerancia))
+total_satisfacao += satisfacao
+
+atual_localizacao = cliente _index
+
+# Adiciona a distância de volta à sede
+total_distancia += ((posicao[atual_localizacao][0] - posicao[0][0])**2 +
+(posicao[atual_localizacao][1] - posicao[0][1])**2)**0.5
+
+# Adiciona a satisfação do último cliente
+total_satisfacao += max(0, 1 - (total_distancia / calcular_tolerancia(total_distancia)))
+
+# Quanto maior a satisfação e menor a distância, melhor o fitness
+return total_satisfacao / total_distancia
+# Calcula a distância do cliente para a sede
+
+dist[0] - positions[0][0])**2 +
+(cliente_posicao[1] - posicao[0][1])**2)**0.5
+
+# Calcula o tempo de tolerância do cliente com base na distância
+tolerancia_cliente = calcular_tolerancia(distancia_cliente_sede)
+
+# Calcula a satisfação do cliente com base no tempo de entrega
+satisfacao = max(0, 1 - (tempo_entrega / tolerancia_cliente))
+
+# Exemplo de uso da função
+cliente_exemplo = cliente_1
+tempo_entrega_exemplo = tempo_45
+satisfacao_exemplo = get_satisfacao(cliente_exemplo, tempo_entrega_exemplo)
+
+return satisfacao

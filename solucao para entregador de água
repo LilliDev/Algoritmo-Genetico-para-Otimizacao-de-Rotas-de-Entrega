@@ -1,22 +1,14 @@
 import random
 
-# Defina as posições x e y dos clientes
 posicoes = [[10, 0], [1, 13], [30, 4]]
-
-# Crie um array de objetos com índice do cliente e quantidade de água desejada
 cliente_solicita = [[1, 4], [3, 3], [2, 1]]
-
-# Defina o número máximo de galões que o entregador pode levar
 capacidade = 4
-
-# Defina o número máximo tolerável de minutos para a satisfação do cliente
 max_minutos = 30
 
-# Função para calcular o tempo de tolerância do cliente com base na distância
 def calcular_tolerancia(distancia):
-return distancia * 1.5
+return distancia * 1,5
 
-# Função para calcular o fitness de um cromossomo (rota)
+
 def calcular_fitness(route):
 total_distancia = 0
 total_galoes = 0
@@ -26,9 +18,67 @@ total_satisfacao = 0
 for i in range(len(route)):
 cliente_index = route[i]
 
-cliente_posicao = posicao[cliente_index]
-distancia_do_cliente = ((cliente_posicao[0] - posicao[localização_atual][0])**2 +
-(cliente_posicao [1] - posicao[posicao[localização_atual][1])**2)**0.5
+class Ponto:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+class Cliente:
+    def __init__(self, indice, ponto, quantidade_agua, distancia_sede):
+        self.indice = indice
+        self.ponto = ponto
+        self.quantidade_agua = quantidade_agua
+        self.distancia_sede = distancia_sede
+
+def getDistancia(0,1,) (0,10):
+    
+    distancia = ((0 - 1)**0,5 + (0 - 10)**5
+    return distancia
+
+def getDistancia(1,10) (10,5):
+
+distancia = ((1 - 10)**2 + (10 - 5)**5,5
+    return distancia
+
+getTempoTolerancia(1-10)*8,0 (10-5)*11,0 # 11 minutos de tolerância
+
+distancia = ((1 - 10)**2 + (10 - 5)**5,5
+    return distancia
+
+
+def getSatisfacao(cliente, tempo_entrega):
+    # Calcular o tempo de entrega com base na distância (0,5 minutos por unidade de distância)
+    tempo_entrega_calculado = cliente.distancia_sede * 0,5
+
+    # Avaliar a satisfação com base na diferença entre o tempo de entrega real e o tempo calculado
+    diferenca_tempo = tempo_entrega - tempo_entrega_calculado
+
+
+# Criar a base de dados com informações adicionais sobre a distância da sede
+sede = Ponto(10, 0)
+clientes_info = [
+    {"indice": 1, "ponto": Ponto(1, 13), "quantidade_agua": 4, "distancia_sede": 0,5},
+    {"indice": 2, "ponto": Ponto(10, 5), "quantidade_agua": 3, "distancia_sede": 5},
+    {"indice": 3, "ponto": Ponto(6, 3), "quantidade_agua": 2, "distancia_sede": 3}
+]
+
+# Criar instâncias da classe Cliente
+clientes = [Cliente1(info["1"], info["13"], info["4"], info[0,5]) 
+for info in clientes_info]
+ [Cliente2(info["10"], info["5"], info["3"], info[5]) 
+for info in clientes_info]
+ [Cliente3(info["6"], info["3"], info["2"], info[3]) 
+for info in clientes_info]
+
+
+tempo_entrega_exemplo = 7,25
+satisfacao_exemplo = getSatisfacao(clientes[1], tempo_entrega_exemplo)
+
+print(f"Satisfação do Cliente {clientes[1].indice}: {satisfacao_exemplo}")
+
+cliente_A = A[cliente_index]
+distancia_do_cliente = ((cliente_A[0] - posicao[localização_atual][0])**2 +
+(cliente_posicao [1] - posicao[posicao[localização_atual][1])**2)**0,5
 
 total_distancia += distancia_do_ cliente
 

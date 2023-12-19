@@ -10,7 +10,7 @@ def calcularTolerancia(distancia):
     return distancia * 0.75
 
 # Função para calcular a satisfação do cliente com base no tempo de entrega
-def getSa7sfacao(tempo_tolerancia, tempo_entrega):
+def getSatisfacao(tempo_tolerancia, tempo_entrega):
     atraso_percentual = (tempo_entrega - tempo_tolerancia) / tempo_tolerancia * 100
 
     if tempo_entrega <= tempo_tolerancia:
@@ -33,7 +33,7 @@ def getSa7sfacao(tempo_tolerancia, tempo_entrega):
         return 0
 
 # Função para calcular a satisfação total da rota
-def calcSa7sfacao(arr_ordem, arr_posicoes, arr_pedido):
+def calcSatisfacao(arr_ordem, arr_posicoes, arr_pedido):
     carga_atual = 4
     tempo_atual = 0
     satisfacao_total = 0
@@ -49,7 +49,7 @@ def calcSa7sfacao(arr_ordem, arr_posicoes, arr_pedido):
             tempo_atual += distancia_anterior * 0.5
 
         tempo_tolerancia = calcularTolerancia(getDistancia(0, 0, x_atual, y_atual))
-        satisfacao_cliente = getSa7sfacao(tempo_tolerancia, tempo_atual)
+        satisfacao_cliente = getSatisfacao(tempo_tolerancia, tempo_atual)
 
         if pedido_atual > carga_atual:
             satisfacao_cliente -= 1  # Punir por não atender completamente o pedido
@@ -91,7 +91,7 @@ def algoritmo_genetico(num_geracoes, tamanho_populacao, tamanho_torneio, taxa_cr
     populacao = inicializar_populacao(tamanho_populacao)
 
     for geracao in range(num_geracoes):
-        fitness = [calcSa7sfacao(individuo, arr_posicoes, arr_pedido) for individuo in populacao]
+        fitness = [calcSatisfacao(individuo, arr_posicoes, arr_pedido) for individuo in populacao]
 
         nova_populacao = []
 
@@ -131,3 +131,82 @@ melhor_rota, melhor_fitness = algoritmo_genetico(num_geracoes=100, tamanho_popul
 
 print("Melhor Rota:", melhor_rota)
 print("Melhor Fitness:", melhor_fitness)
+
+sede = (0, 0)
+base1 = [
+    {"Leonardo": "Cliente A", "coordenadas": (1, 2), "pedidos": 2},
+    {"Lillian": "Cliente B", "coordenadas": (5, 6), "pedidos": 1},
+    {"Nicolas": "Cliente C", "coordenadas": (8, 3), "pedidos": 3},
+    {"Juan": "Cliente D", "coordenadas": (3, 9), "pedidos": 2},
+    {"Mamys": "Cliente E", "coordenadas": (6, 1), "pedidos": 1}
+]
+
+print("Base de Dados - Base 1:")
+for cliente in base1:
+    print(f"{cliente['nome']}: Coordenadas {cliente['coordenadas']}, Pedidos {cliente['pedidos']}")
+    
+sede = (0, 0)
+base2 = [
+    {"André": "Cliente1", "coordenadas": (2, 4), "pedidos": 3},
+    {"Raquel": "Cliente 2", "coordenadas": (7, 5), "pedidos": 2},
+    {"Jaque": "Cliente 3", "coordenadas": (1, 9), "pedidos": 1},
+    {"Alicia": "Cliente 4", "coordenadas": (4, 3), "pedidos": 4},
+    {"Marcia": "Cliente 5", "coordenadas": (8, 6), "pedidos": 2},
+    {"Tom": "Cliente 6", "coordenadas": (6, 1), "pedidos": 3},
+    {"Jane": "Cliente 7", "coordenadas": (3, 7), "pedidos": 1},
+    {"Lucas": "Cliente 8", "coordenadas": (9, 2), "pedidos": 2},
+    {"Black": "Cliente 9", "coordenadas": (5, 8), "pedidos": 1},
+    {"Cariucha": "Cliente 10", "coordenadas": (2, 6), "pedidos": 3}
+]
+
+print("\nBase de Dados - Base 2:")
+for cliente in base2:
+    print(f"{cliente['nome']}: Coordenadas {cliente['coordenadas']}, Pedidos {cliente['pedidos']}")
+    
+sede = (0, 0)
+base3 = [
+    {"nome": f"Cliente {i}", "coordenadas": (random.randint(1, 10), random.randint(1, 10)), "pedidos": random.randint(1, 5)}
+    for i in range(1, 31)
+]
+
+print("\nBase de Dados - Base 3:")
+for cliente in base3:
+    print(f"{cliente['nome']}: Coordenadas {cliente['coordenadas']}, Pedidos {cliente['pedidos']}")
+
+clients =  [0,4,1,3,2,4,2,3,1,4,3,1,4,3,2,4,2,3,1,3,4,1,4,3,1,2,3,1,1,1,1]
+print(len(clients))
+#ordem das entregas
+order_delivery = [0, 28, 7, 0, 27, 0, 8, 30, 0, 2, 10, 0, 27, 0, 13, 0, 2, 10, 0, 23, 7, 0, 8, 3, 0, 15, 0, 28, 14, 21, 8, 0, 9, 0, 28, 11, 0, 14, 28, 0, 29, 18, 0, 12]
+#capacidade atual
+capacity = 4
+#clientes nao atendidos
+no_served = []
+#movimentos desnecessários
+move_useless = 0
+#cliente duplicado
+duplicate_served = 0
+duplicate_client = []
+served = []
+
+for i in range(0,len(order_delivery)):
+    if(order_delivery[i] == 0 ):
+        if(capacity == 4):
+            move_useless+=1
+        capacity = 4
+    if(capacity >= clients[ order_delivery[i] ] ):
+        capacity -= clients[ order_delivery[i] ]
+        if(order_delivery[i]!=0 and order_delivery[i] in served):
+            duplicate_served+=1
+            duplicate_client.append( order_delivery[i] )
+            
+        served.append(order_delivery[i])
+    else:
+        no_served.append( order_delivery[i] )
+        
+print(len(no_served), " - clientes nao atendidos")
+print( no_served )
+print("movimento desnecessário")
+print( move_useless )
+print(duplicate_served, " - clientes atendidos em duplicidade")
+print( duplicate_client )
+

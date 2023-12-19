@@ -1,128 +1,133 @@
 import random
+import math
 
-posicoes = [[10, 0], [1, 13], [30, 4]]
-cliente_solicita = [[1, 4], [3, 3], [2, 1]]
-capacidade = 4
-max_minutos = 30
+# Função para calcular a distância entre dois pontos
+def getDistancia(x1, y1, x2, y2):
+    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
-def calcular_tolerancia(distancia):
-return distancia * 1,5
+# Função para calcular o tempo de tolerância com base na distância
+def calcularTolerancia(distancia):
+    return distancia * 0.75
 
+# Função para calcular a satisfação do cliente com base no tempo de entrega
+def getSa7sfacao(tempo_tolerancia, tempo_entrega):
+    atraso_percentual = (tempo_entrega - tempo_tolerancia) / tempo_tolerancia * 100
 
-def calcular_fitness(route):
-total_distancia = 0
-total_galoes = 0
-localização_atual = 0 # A sede é o ponto de partida
-total_satisfacao = 0
+    if tempo_entrega <= tempo_tolerancia:
+        return 6
+    elif tempo_entrega < tempo_tolerancia / 2:
+        return 10
+    elif tempo_tolerancia / 2 <= tempo_entrega < tempo_tolerancia:
+        return 8
+    elif 0 < atraso_percentual <= 10:
+        return 5
+    elif 10 < atraso_percentual <= 20:
+        return 4
+    elif 20 < atraso_percentual <= 40:
+        return 3
+    elif 40 < atraso_percentual <= 60:
+        return 2
+    elif 60 < atraso_percentual <= 80:
+        return 1
+    else:
+        return 0
 
-for i in range(len(route)):
-cliente_index = route[i]
+# Função para calcular a satisfação total da rota
+def calcSa7sfacao(arr_ordem, arr_posicoes, arr_pedido):
+    carga_atual = 4
+    tempo_atual = 0
+    satisfacao_total = 0
 
-class Ponto:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    for i in range(len(arr_ordem)):
+        cliente_atual = arr_ordem[i]
+        x_atual, y_atual = arr_posicoes[cliente_atual]
+        pedido_atual = arr_pedido[cliente_atual][1]
 
-class Cliente:
-    def __init__(self, indice, ponto, quantidade_agua, distancia_sede):
-        self.indice = indice
-        self.ponto = ponto
-        self.quantidade_agua = quantidade_agua
-        self.distancia_sede = distancia_sede
+        if i > 0:
+            x_anterior, y_anterior = arr_posicoes[arr_ordem[i-1]]
+            distancia_anterior = getDistancia(x_anterior, y_anterior, x_atual, y_atual)
+            tempo_atual += distancia_anterior * 0.5
 
-def getDistancia(0,1,) (0,10):
-    
-    distancia = ((0 - 1)**0,5 + (0 - 10)**5
-    return distancia
+        tempo_tolerancia = calcularTolerancia(getDistancia(0, 0, x_atual, y_atual))
+        satisfacao_cliente = getSa7sfacao(tempo_tolerancia, tempo_atual)
 
-def getDistancia(1,10) (10,5):
+        if pedido_atual > carga_atual:
+            satisfacao_cliente -= 1  # Punir por não atender completamente o pedido
 
-distancia = ((1 - 10)**2 + (10 - 5)**5,5
-    return distancia
+        satisfacao_total += satisfacao_cliente
 
-getTempoTolerancia(1-10)*8,0 (10-5)*11,0 # 11 minutos de tolerância
+        if cliente_atual == 0:  # Se for a sede, abastece a carga
+            carga_atual = 4
+        else:
+            carga_atual -= pedido_atual
 
-distancia = ((1 - 10)**2 + (10 - 5)**5,5
-    return distancia
+    return satisfacao_total
 
+# Função de inicialização da população
+def inicializar_populacao(num_individuos):
+    return [list(range(1, len(arr_posicoes))) for _ in range(num_individuos)]
 
-def getSatisfacao(cliente, tempo_entrega):
-    # Calcular o tempo de entrega com base na distância (0,5 minutos por unidade de distância)
-    tempo_entrega_calculado = cliente.distancia_sede * 0,5
+# Função de crossover (um ponto)
+def crossover(pai1, pai2):
+    ponto_corte = random.randint(0, len(pai1) - 1)
+    filho1 = pai1[:ponto_corte] + [gene for gene in pai2 if gene not in pai1[:ponto_corte]]
+    filho2 = pai2[:ponto_corte] + [gene for gene in pai1 if gene not in pai2[:ponto_corte]]
+    return filho1, filho2
 
-    # Avaliar a satisfação com base na diferença entre o tempo de entrega real e o tempo calculado
-    diferenca_tempo = tempo_entrega - tempo_entrega_calculado
+# Função de mutação (swap)
+def mutacao(individuo):
+    idx1, idx2 = random.sample(range(len(individuo)), 2)
+    individuo[idx1], individuo[idx2] = individuo[idx2], individuo[idx1]
+    return individuo
 
+# Função de seleção de pais usando torneio
+def selecao_torneio(populacao, fitness, tamanho_torneio):
+    torneio = random.sample(range(len(populacao)), tamanho_torneio)
+    vencedor = min(torneio, key=lambda i: fitness[i])
+    return populacao[vencedor]
 
-# Criar a base de dados com informações adicionais sobre a distância da sede
-sede = Ponto(10, 0)
-clientes_info = [
-    {"indice": 1, "ponto": Ponto(1, 13), "quantidade_agua": 4, "distancia_sede": 0,5},
-    {"indice": 2, "ponto": Ponto(10, 5), "quantidade_agua": 3, "distancia_sede": 5},
-    {"indice": 3, "ponto": Ponto(6, 3), "quantidade_agua": 2, "distancia_sede": 3}
-]
+# Algoritmo Genético
+def algoritmo_genetico(num_geracoes, tamanho_populacao, tamanho_torneio, taxa_crossover, taxa_mutacao):
+    populacao = inicializar_populacao(tamanho_populacao)
 
-# Criar instâncias da classe Cliente
-clientes = [Cliente1(info["1"], info["13"], info["4"], info[0,5]) 
-for info in clientes_info]
- [Cliente2(info["10"], info["5"], info["3"], info[5]) 
-for info in clientes_info]
- [Cliente3(info["6"], info["3"], info["2"], info[3]) 
-for info in clientes_info]
+    for geracao in range(num_geracoes):
+        fitness = [calcSa7sfacao(individuo, arr_posicoes, arr_pedido) for individuo in populacao]
 
+        nova_populacao = []
 
-tempo_entrega_exemplo = 7,25
-satisfacao_exemplo = getSatisfacao(clientes[1], tempo_entrega_exemplo)
+        # Elitismo - mantenha o melhor indivíduo
+        melhor_individuo = populacao[fitness.index(max(fitness))]
+        nova_populacao.append(melhor_individuo)
 
-print(f"Satisfação do Cliente {clientes[1].indice}: {satisfacao_exemplo}")
+        # Crossover e mutação para gerar a nova população
+        while len(nova_populacao) < tamanho_populacao:
+            pai1 = selecao_torneio(populacao, fitness, tamanho_torneio)
+            pai2 = selecao_torneio(populacao, fitness, tamanho_torneio)
 
-cliente_A = A[cliente_index]
-distancia_do_cliente = ((cliente_A[0] - posicao[localização_atual][0])**2 +
-(cliente_posicao [1] - posicao[posicao[localização_atual][1])**2)**0,5
+            if random.random() < taxa_crossover:
+                filho1, filho2 = crossover(pai1, pai2)
+            else:
+                filho1, filho2 = pai1[:], pai2[:]
 
-total_distancia += distancia_do_ cliente
+            if random.random() < taxa_mutacao:
+                filho1 = mutacao(filho1)
+            if random.random() < taxa_mutacao:
+                filho2 = mutacao(filho2)
 
-# Quantidade de água desejada pelo cliente
+            nova_populacao.extend([filho1, filho2])
 
-total_galoes += cliente _solicitacao [cliente _index][1]
+        populacao = nova_populacao
 
-# Calcula o tempo de tolerância do cliente com base na distância
-cliente _tolerancia = calcular_tolerancia(distancia_do_ cliente)
+    # Retorne o melhor indivíduo da última geração
+    melhor_individuo = populacao[fitness.index(max(fitness))]
+    return melhor_individuo, max(fitness)
 
-# Penaliza rotas que excedem a capacidade ou tempo máximo
-if total_galoes &gt; capacidade ou total_distancia &gt; max_minutos ou total_distancia &gt; cliente
-_tolerancia:
-return 0
-else:
-# Adiciona satisfação do cliente com base no tempo de tolerância restante
-satisfacao = max(0, 1 - (total_distancia / cliente _tolerancia))
-total_satisfacao += satisfacao
+# Exemplo de uso
+arr_posicoes = [[10, 0], [1, 13], [30, 4]]
+arr_pedido = [[1, 4], [3, 3], [2, 1]]
 
-atual_localizacao = cliente _index
+melhor_rota, melhor_fitness = algoritmo_genetico(num_geracoes=100, tamanho_populacao=50, tamanho_torneio=5,
+                                                 taxa_crossover=0.8, taxa_mutacao=0.2)
 
-# Adiciona a distância de volta à sede
-total_distancia += ((posicao[atual_localizacao][0] - posicao[0][0])**2 +
-(posicao[atual_localizacao][1] - posicao[0][1])**2)**0.5
-
-# Adiciona a satisfação do último cliente
-total_satisfacao += max(0, 1 - (total_distancia / calcular_tolerancia(total_distancia)))
-
-# Quanto maior a satisfação e menor a distância, melhor o fitness
-return total_satisfacao / total_distancia
-# Calcula a distância do cliente para a sede
-
-dist[0] - positions[0][0])**2 +
-(cliente_posicao[1] - posicao[0][1])**2)**0.5
-
-# Calcula o tempo de tolerância do cliente com base na distância
-tolerancia_cliente = calcular_tolerancia(distancia_cliente_sede)
-
-# Calcula a satisfação do cliente com base no tempo de entrega
-satisfacao = max(0, 1 - (tempo_entrega / tolerancia_cliente))
-
-# Exemplo de uso da função
-cliente_exemplo = cliente_1
-tempo_entrega_exemplo = tempo_45
-satisfacao_exemplo = get_satisfacao(cliente_exemplo, tempo_entrega_exemplo)
-
-return satisfacao
+print("Melhor Rota:", melhor_rota)
+print("Melhor Fitness:", melhor_fitness)

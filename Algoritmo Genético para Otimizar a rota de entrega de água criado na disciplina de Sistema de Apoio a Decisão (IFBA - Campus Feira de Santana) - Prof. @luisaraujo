@@ -1,10 +1,14 @@
 import random
 import math
-
 # Função para calcular a distância entre dois pontos
 def getDistancia(x1, y1, x2, y2):
-    return math.sqrt((x2 - x1)*2 + (y2 - y1)*2)
-
+   
+    if x1 is not None and y1 is not None and x2 is not None and y2 is not None:
+        return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    else:
+        # Tratar o caso em que alguns dos valores são None
+        return 0 
+        
 # Função para calcular o tempo de tolerância com base na distância
 def calcularTolerancia(distancia):
     return distancia * 0.75
@@ -123,13 +127,11 @@ def algoritmo_genetico(arr_posicoes, arr_pedido, num_geracoes, tamanho_populacao
     
     return melhor_individuo, max(fitness)
     
-    
-
 # Exemplo de uso
 arr_posicoes = [[10, 0], [1, 13], [30, 4]]
 arr_pedido = [[1, 4], [3, 3], [2, 1]]
 
-melhor_rota, melhor_fitness = algoritmo_genetico(arr_posicoes, arr_pedido, num_geracoes=100, tamanho_populacao=50,
+melhor_rota, melhor_fitness = algoritmo_genetico(arr_posicoes , arr_pedido , num_geracoes=100, tamanho_populacao=50,
                                                  tamanho_torneio=5, taxa_crossover=0.8, taxa_mutacao=0.2)
 
 print("Melhor Rota:", melhor_rota)
@@ -140,10 +142,14 @@ print("Melhor Fitness:", melhor_fitness)
 base1_posicoes = [[0, 0], [10, 0], [1, 13], [30, 4], [5, 5]]
 base1_pedidos = [[0, 0], [1, 4], [3, 3], [2, 1], [4, 2], [5, 3]]
 
+clientes_base1 = [pedido[1] for pedido in base1_pedidos]
+print(clientes_base1)
 
 base2_posicoes = [[0, 0], [10, 0], [1, 13], [30, 4], [5, 5], [15, 15], [20, 10], [25, 8], [2, 18], [7, 12]]
 base2_pedidos = [[1, 4], [3, 3], [2, 1], [4, 2], [5, 3], [6, 2], [7, 4], [8, 3], [9, 2], [10, 1]]
 
+clientes_base2 = [pedido[1] for pedido in base2_pedidos]
+print(clientes_base2)
 
 base3_posicoes = [[0, 0], [10, 0], [1, 13], [30, 4], [5, 5], [15, 15], [20, 10], [25, 8], [2, 18], [7, 12],
                   [11, 14], [23, 3], [4, 19], [6, 7], [17, 11], [8, 16], [13, 5], [22, 9], [3, 21], [9, 17],
@@ -152,8 +158,8 @@ base3_pedidos = [[1, 4], [3, 3], [2, 1], [4, 2], [5, 3], [6, 2], [7, 4], [8, 3],
                  [11, 3], [12, 2], [13, 4], [14, 1], [15, 3], [16, 2], [17, 4], [18, 2], [19, 3], [20, 1],
                  [21, 2], [22, 3], [23, 4], [24, 1], [25, 3], [26, 2], [27, 4], [28, 1], [29, 2], [30, 3]]
 
-
-
+clientes_base3 = [pedido[1] for pedido in base3_pedidos]
+print(clientes_base3)
 
 melhor_rota_base1, melhor_fitness_base1 = algoritmo_genetico(base1_posicoes, base1_pedidos, num_geracoes=100, tamanho_populacao=50,
                                                              tamanho_torneio=5, taxa_crossover=0.8, taxa_mutacao=0.2)
@@ -171,7 +177,7 @@ print("\nMelhor Rota - Base 3:", melhor_rota_base3)
 print("Melhor Fitness - Base 3:", melhor_fitness_base3)
 
 
-################         AVALIANDO ROTA         ###########
+# AVALIANDO ROTA       
 
 def avaliar_rota(order_delivery, clients):
     capacity = 4
@@ -195,7 +201,7 @@ def avaliar_rota(order_delivery, clients):
         else:
             no_served.append(order_delivery[i])
 
-    resultado = {
+    resultado_avaliacao_base1 = {
         "clientes_nao_atendidos": len(no_served),
         "clientes_nao_atendidos_lista": no_served,
         "movimentos_desnecessarios": move_useless,
@@ -203,21 +209,33 @@ def avaliar_rota(order_delivery, clients):
         "clientes_atendidos_em_duplicidade_lista": duplicate_client
     }
 
-    return resultado
-
-
+    return resultado_avaliacao_base1
 
 # Criando o array clients com base em arr_pedido
-clients_base1 = [pedido[1] for pedido in base1_pedidos]
 
-print(clients_base1)
+resultado_avaliacao_base1 = avaliar_rota(melhor_rota_base1, clientes_base1)
+print("Clientes não atendidos:", resultado_avaliacao_base1["clientes_nao_atendidos"])
+print("Lista de clientes não atendidos:", resultado_avaliacao_base1["clientes_nao_atendidos_lista"])
+print("Movimentos desnecessários:", resultado_avaliacao_base1["movimentos_desnecessarios"])
+print("Clientes atendidos em duplicidade:", resultado_avaliacao_base1["clientes_atendidos_em_duplicidade"])
+print("Lista de clientes atendidos em duplicidade:", resultado_avaliacao_base1["clientes_atendidos_em_duplicidade_lista"])
+
+# Avaliando a rota para a base 2
 
 
-
-resultado_avaliacao = avaliar_rota(melhor_rota_base1, clients_base1)
-
+resultado_avaliacao_base2 = avaliar_rota(melhor_rota_base2, clientes_base2)
 print("Clientes não atendidos:", resultado_avaliacao["clientes_nao_atendidos"])
 print("Lista de clientes não atendidos:", resultado_avaliacao["clientes_nao_atendidos_lista"])
 print("Movimentos desnecessários:", resultado_avaliacao["movimentos_desnecessarios"])
 print("Clientes atendidos em duplicidade:", resultado_avaliacao["clientes_atendidos_em_duplicidade"])
 print("Lista de clientes atendidos em duplicidade:", resultado_avaliacao["clientes_atendidos_em_duplicidade_lista"])
+
+# Avaliando a rota para a base 3
+
+resultado_avaliacao_base3 = avaliar_rota(melhor_rota_base3, clients_base3)
+print("Clientes não atendidos:", resultado_avaliacao["clientes_nao_atendidos"])
+print("Lista de clientes não atendidos:", resultado_avaliacao["clientes_nao_atendidos_lista"])
+print("Movimentos desnecessários:", resultado_avaliacao["movimentos_desnecessarios"])
+print("Clientes atendidos em duplicidade:", resultado_avaliacao["clientes_atendidos_em_duplicidade"])
+print("Lista de clientes atendidos em duplicidade:", resultado_avaliacao["clientes_atendidos_em_duplicidade_lista"])
+
